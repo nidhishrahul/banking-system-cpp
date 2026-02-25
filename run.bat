@@ -1,11 +1,13 @@
 @echo off
-g++ main.cpp -o main.exe
+echo Compiling...
+
+g++ src\*.cpp -o bank.exe
 
 if errorlevel 1 (
     echo Compilation failed.
 ) else (
     echo Compilation successful. Running program...
-    main.exe
+    bank.exe
 )
 
 pause

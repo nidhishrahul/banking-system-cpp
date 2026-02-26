@@ -1,7 +1,7 @@
 # Banking System (C++ Console Application)
 
 A console-based banking system built using C++ to demonstrate
-Object-Oriented Programming and modular design.
+Object-Oriented Programming, modular design, and persistent storage.
 
 ---
 
@@ -15,13 +15,20 @@ Object-Oriented Programming and modular design.
 - Constructor implementation
 - Deposit functionality
 - Withdraw functionality
-- Display account details
+- Encapsulation using private members
 
 ### Phase 3 – Menu Driven System
 - Dynamic account creation
 - Multiple accounts using STL vector
 - Deposit & withdraw via search
 - Interactive console menu
+
+### Phase 4 – File Persistence (Persistent Storage)
+- Accounts stored in `data/accounts.txt`
+- Auto-load accounts on program start
+- Auto-save accounts on exit
+- File handling using `ifstream`, `ofstream`
+- Data parsing using `stringstream`
 
 ---
 
@@ -32,6 +39,7 @@ Object-Oriented Programming and modular design.
 - Withdraw Money
 - Display Account Details
 - Multiple accounts support
+- Data persistence between program runs
 
 ---
 
@@ -39,10 +47,29 @@ Object-Oriented Programming and modular design.
 
 - OOP (Encapsulation, Constructors)
 - Header & Source separation
-- STL (vector)
-- Loop-based menu
-- switch-case
+- STL (`vector`)
+- Loop-based menu system
+- `switch-case`
 - Linear search logic
+- File Handling (`ifstream`, `ofstream`)
+- String parsing (`stringstream`)
+
+---
+
+## Project Structure
+
+Banking-System/
+│
+├── src/
+│   ├── main.cpp
+│   ├── Account.h
+│   └── Account.cpp
+│
+├── data/
+│   └── accounts.txt
+│
+├── run.bat
+└── README.md
 
 ---
 
@@ -60,8 +87,8 @@ g++ *.cpp -o bank
 
 ## Upcoming Phases
 
-- File persistence (save/load accounts)
-- Login authentication
-- Transaction logging
-- Input validation
-- Refactoring for modularity
+- PIN authentication before transactions
+- Transaction history logging
+- Duplicate account prevention
+- Input validation improvements
+- Code refactoring & modular improvements

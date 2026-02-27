@@ -1,7 +1,7 @@
 @echo off
 echo Compiling...
 
-g++ src\*.cpp -o bank.exe
+g++ -Iinclude src/main.cpp src/Account.cpp src/Bank.cpp -o bank.exe
 
 if errorlevel 1 (
     echo Compilation failed.

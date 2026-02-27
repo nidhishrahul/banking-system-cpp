@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <limits>
+
 #include "Account.h"
 
 using namespace std;
@@ -10,7 +12,7 @@ void loadAccounts(vector<Account> &accounts) {
     ifstream file("data/accounts.txt");
 
     // file existence check
-    if(!file) {
+    if(!file.is_open()) {
         cout << "No existing data file found. Starting fresh.\n";
         return;
     }
@@ -24,7 +26,10 @@ void loadAccounts(vector<Account> &accounts) {
         string name;
         double balance;
 
-        ss >> accNo >> name >> balance >> pin;
+        // validate file format before loading
+        if(!(ss >> accNo >> name >> balance >> pin)) {
+            continue;
+        }
 
         accounts.push_back(Account(accNo, name, balance, pin));
     }
@@ -45,6 +50,31 @@ void saveAccounts(vector<Account> &accounts) {
     file.close();
 }
 
+double getValidAmount() {
+    double amount;
+
+    while(true) {
+        cin >> amount;
+
+        // check type validation
+        if(cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Enter numeric value: ";
+            continue;
+        }
+
+        // check value validation
+        if(amount <= 0) {
+            cout << "Amount must be positive. Try again: ";
+            continue;
+        }
+
+        break;
+    }
+    return amount;
+}
+
 int main() {
     vector<Account> accounts;
 
@@ -63,6 +93,14 @@ int main() {
         cout << "Enter your choice: ";
         
         cin >> choice;
+
+        // check choice validation
+        if(cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid choice.\n";
+            continue;
+        }
         
         switch(choice) {
 
@@ -74,11 +112,26 @@ int main() {
                 cout << "Enter Account Number: ";
                 cin >> accNo;
 
+                bool exists = false;
+                
+                for(auto &acc : accounts) {
+                    if(acc.getAccountNumber() == accNo) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if(exists) {
+                    cout << "Account number already exists!\n";
+                    break;
+                }
+
                 cout << "Enter Name: ";
                 cin >> name;
 
                 cout << "Enter Initial Balance: ";
-                cin >> balance;
+                // validation used
+                balance = getValidAmount();
 
                 cout << "Set PIN: ";
                 cin >> pin;
@@ -90,7 +143,6 @@ int main() {
 
             case 2: {
                 int accNo;
-                double amount;
 
                 cout << "Enter Account Number: ";
                 cin >> accNo;
@@ -100,14 +152,23 @@ int main() {
                 for(auto &acc : accounts) {
                     if(acc.getAccountNumber() == accNo) {
                         
-                        cout << "Enter amount to deposit: ";
-                        cin >> amount;
+                        // pin authentication
+                        int enteredPin;
+                        cout << "Enter PIN: ";
+                        cin >> enteredPin;
 
-                        if(acc.deposit(amount)) {
-                            cout << "Deposit Successfully!\n";
-                        } else {
-                            cout << "Invalid deposit amount.\n";
+                        if(enteredPin != acc.getPin()) {
+                            cout << "Incorredt PIN!\n";
+                            found = true;
+                            break;
                         }
+
+                        cout << "Enter amount to deposit: ";
+                        // change
+                        double amount = getValidAmount();
+
+                        acc.deposit(amount);
+                        cout << "Deposit Successfully!\n";
 
                         found = true;
                         break;
@@ -122,8 +183,7 @@ int main() {
 
             case 3: {
                 int accNo;
-                double amount;
-
+                
                 cout << "Enter Account Number: ";
                 cin >> accNo;
 
@@ -131,9 +191,21 @@ int main() {
 
                 for(auto &acc : accounts) {
                     if(acc.getAccountNumber() == accNo) {
+
+                        // pin authentication
+                        int enteredPin;
+                        cout << "Enter PIN: ";
+                        cin >> enteredPin;
+
+                        if(enteredPin != acc.getPin()) {
+                            cout << "Incorrect PIN!\n";
+                            found = true;
+                            break;
+                        }
                         
                         cout << "Enter amount to withdraw: ";
-                        cin >> amount;
+                        // change
+                        double amount = getValidAmount();
 
                         if(acc.withdraw(amount)) {
                             cout << "Withdrawal Successfully!\n";
@@ -160,6 +232,17 @@ int main() {
                 bool found = false;
 
                 for(auto &acc : accounts) {
+
+                    // pin authentication
+                    int enteredPin;
+                    cout << "Enter PIN: ";
+                    cin >> enteredPin;
+
+                    if(enteredPin != acc.getPin()) {
+                        cout << "Incorrect PIN!\n";
+                        found = true;
+                        break;
+                    }
 
                     if(acc.getAccountNumber() == accNo) {
                         cout << "Account Holder: " << acc.getName() << endl;

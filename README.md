@@ -1,7 +1,8 @@
 # Banking System (C++ Console Application)
 
 A console-based banking system built using C++ to demonstrate
-Object-Oriented Programming, modular design, and persistent storage.
+Object-Oriented Programming, modular design, persistent storage,
+and defensive programming principles.
 
 ---
 
@@ -30,15 +31,26 @@ Object-Oriented Programming, modular design, and persistent storage.
 - File handling using `ifstream`, `ofstream`
 - Data parsing using `stringstream`
 
+### Phase 5 – Input Validation & Security Improvements
+- Numeric input validation using `cin.fail()`
+- Buffer clearing using `cin.clear()` and `cin.ignore()`
+- Prevention of negative deposits and withdrawals
+- PIN authentication before deposit, withdrawal, and display
+- Duplicate account number prevention
+- Menu input validation
+- Defensive programming implementation
+
 ---
 
 ## Features Implemented
 
 - Create Account
-- Deposit Money
-- Withdraw Money
-- Display Account Details
+- Deposit Money (with PIN verification)
+- Withdraw Money (with PIN verification)
+- Display Account Details (with PIN verification)
 - Multiple accounts support
+- Duplicate account prevention
+- Input validation for numeric fields
 - Data persistence between program runs
 
 ---
@@ -53,6 +65,8 @@ Object-Oriented Programming, modular design, and persistent storage.
 - Linear search logic
 - File Handling (`ifstream`, `ofstream`)
 - String parsing (`stringstream`)
+- Input stream error handling
+- Defensive programming
 
 ---
 
@@ -80,15 +94,24 @@ Banking-System/
 
 ### Manual Compilation
 cd src
-g++ *.cpp -o bank
+g++ -I../include *.cpp -o bank
 .\bank.exe
+
+---
+
+## Current System Status
+
+✔ Stable  
+✔ User-error resistant  
+✔ Persistent storage enabled  
+✔ PIN-protected transactions  
 
 ---
 
 ## Upcoming Phases
 
-- PIN authentication before transactions
 - Transaction history logging
-- Duplicate account prevention
-- Input validation improvements
-- Code refactoring & modular improvements
+- Automatic save after each transaction
+- Refactoring repeated logic into helper functions
+- Improved file write safety (temporary file strategy)
+- Admin/User role separation

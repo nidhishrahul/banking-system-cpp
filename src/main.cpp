@@ -3,10 +3,21 @@
 #include <sstream>
 #include <vector>
 #include <limits>
+#include <ctime>
 
 #include "Account.h"
 
 using namespace std;
+
+// helper function to find account
+Account* findAccount(vector<Account> &accounts, int accNo) {
+    for(auto &acc : accounts) {
+        if(acc.getAccountNumber() == accNo) {
+            return &acc;
+        }
+    }
+    return nullptr;
+}
 
 void loadAccounts(vector<Account> &accounts) {
     ifstream file("data/accounts.txt");
@@ -112,16 +123,8 @@ int main() {
                 cout << "Enter Account Number: ";
                 cin >> accNo;
 
-                bool exists = false;
-                
-                for(auto &acc : accounts) {
-                    if(acc.getAccountNumber() == accNo) {
-                        exists = true;
-                        break;
-                    }
-                }
-
-                if(exists) {
+                // p-6 use helper function
+                if(findAccount(accounts, accNo) != nullptr) {
                     cout << "Account number already exists!\n";
                     break;
                 }
@@ -137,6 +140,10 @@ int main() {
                 cin >> pin;
 
                 accounts.push_back(Account(accNo, name, balance, pin));
+
+                // p-6 auto-save
+                saveAccounts(accounts);
+
                 cout << "Account created successfully!\n";
                 break;
             }
@@ -147,37 +154,34 @@ int main() {
                 cout << "Enter Account Number: ";
                 cin >> accNo;
 
-                bool found = false;
+                // p-6 change
+                Account* acc = findAccount(accounts, accNo);
 
-                for(auto &acc : accounts) {
-                    if(acc.getAccountNumber() == accNo) {
-                        
-                        // pin authentication
-                        int enteredPin;
-                        cout << "Enter PIN: ";
-                        cin >> enteredPin;
 
-                        if(enteredPin != acc.getPin()) {
-                            cout << "Incorredt PIN!\n";
-                            found = true;
-                            break;
-                        }
-
-                        cout << "Enter amount to deposit: ";
-                        // change
-                        double amount = getValidAmount();
-
-                        acc.deposit(amount);
-                        cout << "Deposit Successfully!\n";
-
-                        found = true;
-                        break;
-                    }
-                }
-
-                if(!found) {
+                if(acc == nullptr) {
                     cout << "Account not found!\n";
+                    break;
                 }
+
+                int enteredPin;
+                cout << "Enter PIN: ";
+                cin >> enteredPin;
+
+                // pin authentication
+                if(enteredPin != acc->getPin()) {
+                    cout << "Incorrect PIN!\n";
+                    break;
+                }
+
+                cout << "Enter amount to deposit: ";
+                double amount = getValidAmount();
+
+                acc->deposit(amount);
+
+                // auto-save
+                saveAccounts(accounts);
+
+                cout << "Deposit Successfully!\n";
                 break;
             }
 
@@ -187,75 +191,59 @@ int main() {
                 cout << "Enter Account Number: ";
                 cin >> accNo;
 
-                bool found = false;
+                Account* acc = findAccount(accounts, accNo);
 
-                for(auto &acc : accounts) {
-                    if(acc.getAccountNumber() == accNo) {
+                if(acc == nullptr) {
+                cout << "Account not found.\n";
+                break;
+            }
 
-                        // pin authentication
-                        int enteredPin;
-                        cout << "Enter PIN: ";
-                        cin >> enteredPin;
+                int enteredPin;
+                cout << "Enter PIN: ";
+                cin >> enteredPin;
 
-                        if(enteredPin != acc.getPin()) {
-                            cout << "Incorrect PIN!\n";
-                            found = true;
-                            break;
-                        }
-                        
-                        cout << "Enter amount to withdraw: ";
-                        // change
-                        double amount = getValidAmount();
-
-                        if(acc.withdraw(amount)) {
-                            cout << "Withdrawal Successfully!\n";
-                        } else {
-                            cout << "Insufficient Balance.\n";
-                        }
-                        found = true;
-                        break;
-                    }
+                if(enteredPin != acc->getPin()) {
+                    cout << "Incorrect PIN!\n";
+                    break;  
                 }
 
-                if(!found) {
-                    cout << "Account not found.\n";
+                cout << "Enter amount to withdraw: ";
+                double amount = getValidAmount();
+
+                if(acc->withdraw(amount)) {
+                    saveAccounts(accounts);  // PHASE 6 CHANGE (auto-save)
+                    cout << "Withdrawal Successfully!\n";
+                    } else {
+                    cout << "Insufficient Balance.\n";
                 }
+
                 break;
             }
 
             case 4: {
                 int accNo;
-                
                 cout << "Enter Account Number: ";
                 cin >> accNo;
 
-                bool found = false;
+                Account* acc = findAccount(accounts, accNo);  // PHASE 6 CHANGE
 
-                for(auto &acc : accounts) {
-
-                    // pin authentication
-                    int enteredPin;
-                    cout << "Enter PIN: ";
-                    cin >> enteredPin;
-
-                    if(enteredPin != acc.getPin()) {
-                        cout << "Incorrect PIN!\n";
-                        found = true;
-                        break;
-                    }
-
-                    if(acc.getAccountNumber() == accNo) {
-                        cout << "Account Holder: " << acc.getName() << endl;
-                        cout << "Available Balance: " << acc.getBalance() << endl;
-
-                        found = true;
-                        break;
-                    }
-                }
-
-                if(!found) {
+                if(acc == nullptr) {
                     cout << "Account not found.\n";
+                    break;
                 }
+
+                int enteredPin;
+                cout << "Enter PIN: ";
+                cin >> enteredPin;
+
+                if(enteredPin != acc->getPin()) {
+                    cout << "Incorrect PIN!\n";
+                    break;
+                }
+
+                cout << "Account Holder: " << acc->getName() << endl;
+                cout << "Available Balance: " << acc->getBalance() << endl;
+
                 break;
             }
 
